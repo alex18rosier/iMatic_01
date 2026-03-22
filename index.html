@@ -1,0 +1,1453 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Automação Inteligente com iLogic — Autodesk Inventor</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet" />
+
+  <style>
+    /* ── VARIABLES ─────────────────────────────────────────────── */
+    :root {
+      --blue:        #2D6CDF;
+      --blue-dark:   #1A4ED8;
+      --blue-deeper: #0F39B5;
+      --blue-soft:   #EEF3FD;
+      --white:       #FFFFFF;
+      --gray-light:  #F5F7FA;
+      --gray-mid:    #E4E9F2;
+      --gray-text:   #6B7A99;
+      --dark:        #0D1526;
+      --dark-mid:    #1C2A47;
+      --text:        #1E2D4D;
+
+      --font-head: 'Sora', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+
+      --radius:   12px;
+      --radius-lg: 20px;
+      --shadow:   0 4px 24px rgba(45,108,223,.12);
+      --shadow-lg:0 12px 48px rgba(45,108,223,.18);
+
+      --max-w: 1100px;
+      --section-py: clamp(60px, 8vw, 120px);
+    }
+
+    /* ── RESET ──────────────────────────────────────────────────── */
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: var(--font-head);
+      color: var(--text);
+      background: var(--white);
+      line-height: 1.65;
+      -webkit-font-smoothing: antialiased;
+    }
+    img { max-width: 100%; display: block; }
+    a { color: inherit; text-decoration: none; }
+    ul { list-style: none; }
+
+    /* ── UTILITY ────────────────────────────────────────────────── */
+    .container {
+      width: 100%;
+      max-width: var(--max-w);
+      margin-inline: auto;
+      padding-inline: clamp(20px, 5vw, 60px);
+    }
+    .section { padding-block: var(--section-py); }
+    .section--gray { background: var(--gray-light); }
+    .section--dark { background: var(--dark); color: var(--white); }
+    .section--blue { background: var(--blue); color: var(--white); }
+
+    .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: .75rem;
+      font-weight: 600;
+      letter-spacing: .08em;
+      text-transform: uppercase;
+      color: var(--blue);
+      background: var(--blue-soft);
+      border: 1px solid rgba(45,108,223,.2);
+      padding: 5px 12px;
+      border-radius: 999px;
+      margin-bottom: 20px;
+    }
+    .section--dark .tag,
+    .section--blue .tag {
+      color: #fff;
+      background: rgba(255,255,255,.12);
+      border-color: rgba(255,255,255,.25);
+    }
+
+    .eyebrow {
+      font-size: .78rem;
+      font-weight: 700;
+      letter-spacing: .1em;
+      text-transform: uppercase;
+      color: var(--blue);
+      margin-bottom: 12px;
+    }
+    .section--dark .eyebrow { color: rgba(255,255,255,.6); }
+
+    h1,h2,h3,h4 { line-height: 1.2; font-weight: 800; }
+    h1 { font-size: clamp(2.2rem, 5vw, 3.6rem); }
+    h2 { font-size: clamp(1.75rem, 3.5vw, 2.8rem); }
+    h3 { font-size: clamp(1.2rem, 2vw, 1.5rem); }
+
+    p { color: var(--gray-text); }
+    .section--dark p, .section--blue p { color: rgba(255,255,255,.75); }
+
+    /* ── BUTTONS ────────────────────────────────────────────────── */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      font-family: var(--font-head);
+      font-weight: 700;
+      font-size: 1rem;
+      padding: 16px 36px;
+      border-radius: var(--radius);
+      border: none;
+      cursor: pointer;
+      transition: transform .2s, box-shadow .2s, background .2s;
+      text-align: center;
+    }
+    .btn--primary {
+      background: var(--blue-dark);
+      color: #fff;
+      box-shadow: 0 6px 24px rgba(26,78,216,.35);
+    }
+    .btn--primary:hover {
+      background: var(--blue-deeper);
+      transform: translateY(-2px);
+      box-shadow: 0 10px 32px rgba(26,78,216,.45);
+    }
+    .btn--primary:active { transform: translateY(0); }
+    .btn--ghost {
+      background: transparent;
+      color: var(--blue-dark);
+      border: 2px solid var(--blue-dark);
+    }
+    .btn--ghost:hover { background: var(--blue-soft); transform: translateY(-2px); }
+    .btn--xl { padding: 20px 48px; font-size: 1.1rem; border-radius: 14px; }
+
+    .btn-pulse {
+      animation: pulse 2.4s ease-in-out infinite;
+    }
+    @keyframes pulse {
+      0%,100% { box-shadow: 0 6px 24px rgba(26,78,216,.35); }
+      50%      { box-shadow: 0 8px 40px rgba(26,78,216,.55); }
+    }
+
+    /* ── FADE-IN (Intersection Observer) ──────────────────────── */
+    .fade-in {
+      opacity: 0;
+      transform: translateY(28px);
+      transition: opacity .6s ease, transform .6s ease;
+    }
+    .fade-in.visible {
+      opacity: 1;
+      transform: none;
+    }
+    .fade-in-delay-1 { transition-delay: .1s; }
+    .fade-in-delay-2 { transition-delay: .2s; }
+    .fade-in-delay-3 { transition-delay: .3s; }
+    .fade-in-delay-4 { transition-delay: .4s; }
+    .fade-in-delay-5 { transition-delay: .5s; }
+
+    /* ── NAV ────────────────────────────────────────────────────── */
+    nav {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255,255,255,.9);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--gray-mid);
+    }
+    .nav-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-block: 16px;
+    }
+    .nav-logo {
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--dark);
+      letter-spacing: -.01em;
+    }
+    .nav-logo span { color: var(--blue); }
+    .nav-cta { padding: 10px 22px; font-size: .9rem; }
+
+    /* ── HERO ───────────────────────────────────────────────────── */
+    #hero {
+      background: var(--dark);
+      color: #fff;
+      padding-block: clamp(80px, 10vw, 140px);
+      position: relative;
+      overflow: hidden;
+    }
+    #hero::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 80% 60% at 70% 50%, rgba(45,108,223,.22) 0%, transparent 70%),
+        radial-gradient(ellipse 40% 40% at 20% 80%, rgba(26,78,216,.15) 0%, transparent 60%);
+      pointer-events: none;
+    }
+    /* grid pattern */
+    #hero::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background-image: linear-gradient(rgba(45,108,223,.06) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(45,108,223,.06) 1px, transparent 1px);
+      background-size: 40px 40px;
+      pointer-events: none;
+    }
+    .hero-inner {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: center;
+    }
+    @media (max-width: 768px) {
+      .hero-inner { grid-template-columns: 1fr; gap: 40px; }
+    }
+    .hero-content h1 {
+      color: #fff;
+      margin-bottom: 24px;
+    }
+    .hero-content h1 em {
+      font-style: normal;
+      color: var(--blue);
+    }
+    .hero-content p {
+      color: rgba(255,255,255,.75);
+      font-size: 1.1rem;
+      margin-bottom: 36px;
+      max-width: 500px;
+    }
+    .hero-img-wrap {
+      background: var(--dark-mid);
+      border: 1px solid rgba(45,108,223,.3);
+      border-radius: var(--radius-lg);
+      aspect-ratio: 4/3;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 12px;
+      color: rgba(255,255,255,.35);
+      font-size: .85rem;
+      font-family: var(--font-mono);
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-img-wrap::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 50%, rgba(45,108,223,.12), transparent 70%);
+    }
+    .hero-img-icon {
+      width: 56px;
+      height: 56px;
+      border-radius: 14px;
+      background: rgba(45,108,223,.2);
+      border: 1px solid rgba(45,108,223,.4);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+    }
+
+    /* ── VIDEO SECTION ──────────────────────────────────────────── */
+    #video { padding-block: var(--section-py); }
+    .video-wrap {
+      background: var(--dark);
+      border-radius: var(--radius-lg);
+      aspect-ratio: 16/9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-direction: column;
+      gap: 16px;
+      color: rgba(255,255,255,.4);
+      font-family: var(--font-mono);
+      font-size: .9rem;
+      max-width: 820px;
+      margin-inline: auto;
+      border: 1px solid rgba(45,108,223,.2);
+      position: relative;
+      overflow: hidden;
+    }
+    .video-wrap::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 50%, rgba(45,108,223,.1), transparent 65%);
+    }
+    .play-btn {
+      width: 72px;
+      height: 72px;
+      border-radius: 50%;
+      background: var(--blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      color: #fff;
+      cursor: pointer;
+      transition: transform .2s, box-shadow .2s;
+      position: relative;
+      z-index: 1;
+    }
+    .play-btn:hover { transform: scale(1.1); box-shadow: 0 0 40px rgba(45,108,223,.5); }
+    .video-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      justify-content: center;
+      margin-top: 40px;
+    }
+    .video-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      background: var(--blue-soft);
+      border: 1px solid rgba(45,108,223,.15);
+      border-radius: 8px;
+      padding: 10px 18px;
+      font-size: .875rem;
+      font-weight: 600;
+      color: var(--blue-dark);
+    }
+    .video-item::before { content: '✓'; font-weight: 800; }
+
+    /* ── BENEFITS ───────────────────────────────────────────────── */
+    .benefits-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+      margin-top: 52px;
+    }
+    .benefit-card {
+      background: var(--white);
+      border: 1px solid var(--gray-mid);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      transition: box-shadow .25s, transform .25s, border-color .25s;
+    }
+    .benefit-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lg);
+      border-color: rgba(45,108,223,.3);
+    }
+    .benefit-icon {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      background: var(--blue-soft);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.4rem;
+      margin-bottom: 20px;
+    }
+    .benefit-card h3 { margin-bottom: 8px; font-size: 1.05rem; }
+    .benefit-card p { font-size: .9rem; }
+
+    /* ── DEMO ───────────────────────────────────────────────────── */
+    #demo { background: var(--dark); color: #fff; }
+    .demo-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 60px;
+      align-items: center;
+      margin-top: 52px;
+    }
+    @media (max-width: 768px) { .demo-grid { grid-template-columns: 1fr; gap: 36px; } }
+    .demo-steps { display: flex; flex-direction: column; gap: 24px; }
+    .demo-step {
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+    }
+    .demo-num {
+      flex-shrink: 0;
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: var(--blue);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: .9rem;
+      color: #fff;
+    }
+    .demo-step h4 { color: #fff; margin-bottom: 4px; }
+    .demo-step p { font-size: .9rem; }
+    .demo-result {
+      background: var(--dark-mid);
+      border: 1px solid rgba(45,108,223,.3);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+    }
+    .demo-result h4 { color: #fff; margin-bottom: 20px; font-size: 1rem; text-transform: uppercase; letter-spacing: .06em; }
+    .result-item {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 0;
+      border-bottom: 1px solid rgba(255,255,255,.07);
+      color: rgba(255,255,255,.85);
+      font-size: .95rem;
+    }
+    .result-item:last-child { border-bottom: none; }
+    .result-icon {
+      width: 36px;
+      height: 36px;
+      border-radius: 8px;
+      background: rgba(45,108,223,.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1rem;
+    }
+    .result-badge {
+      margin-left: auto;
+      font-size: .72rem;
+      font-weight: 700;
+      background: rgba(45,108,223,.3);
+      color: var(--blue);
+      padding: 3px 10px;
+      border-radius: 999px;
+      font-family: var(--font-mono);
+    }
+    .result-badge.green { background: rgba(34,197,94,.2); color: #4ade80; }
+
+    /* ── FOR WHOM ───────────────────────────────────────────────── */
+    .audience-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 16px;
+      margin-top: 52px;
+    }
+    .audience-card {
+      background: var(--white);
+      border: 1px solid var(--gray-mid);
+      border-radius: var(--radius-lg);
+      padding: 28px 20px;
+      text-align: center;
+      transition: border-color .2s, box-shadow .2s, transform .2s;
+    }
+    .audience-card:hover {
+      border-color: var(--blue);
+      box-shadow: var(--shadow);
+      transform: translateY(-3px);
+    }
+    .audience-icon { font-size: 2rem; margin-bottom: 12px; }
+    .audience-card h4 { font-size: .95rem; }
+
+    /* ── PRODUCT ────────────────────────────────────────────────── */
+    #produto { background: var(--gray-light); }
+    .modules-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+      margin-top: 40px;
+    }
+    .module-card {
+      background: var(--white);
+      border: 1px solid var(--gray-mid);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      position: relative;
+      overflow: hidden;
+      transition: box-shadow .25s, transform .25s;
+    }
+    .module-card:hover { box-shadow: var(--shadow-lg); transform: translateY(-4px); }
+    .module-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 4px;
+      background: var(--blue);
+    }
+    .module-num {
+      font-family: var(--font-mono);
+      font-size: .75rem;
+      color: var(--blue);
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+    .module-card h3 { margin-bottom: 12px; font-size: 1.15rem; }
+    .module-card p { font-size: .9rem; }
+
+    .bonus-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-top: 32px;
+    }
+    .bonus-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      background: var(--blue-soft);
+      border: 1px solid rgba(45,108,223,.2);
+      border-radius: 10px;
+      padding: 14px 20px;
+      font-size: .9rem;
+      font-weight: 600;
+      color: var(--blue-dark);
+    }
+    .bonus-item::before { content: '🎁'; }
+
+    /* ── OFFER ──────────────────────────────────────────────────── */
+    #oferta { background: var(--dark); color: #fff; }
+    .offer-box {
+      background: var(--dark-mid);
+      border: 1px solid rgba(45,108,223,.35);
+      border-radius: var(--radius-lg);
+      padding: clamp(36px, 5vw, 60px);
+      text-align: center;
+      max-width: 600px;
+      margin-inline: auto;
+      position: relative;
+      overflow: hidden;
+    }
+    .offer-box::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(ellipse at 50% 0%, rgba(45,108,223,.18), transparent 60%);
+      pointer-events: none;
+    }
+    .offer-box h2 { color: #fff; margin-bottom: 8px; }
+    .offer-highlight {
+      font-size: clamp(3rem, 8vw, 5rem);
+      font-weight: 800;
+      color: #fff;
+      line-height: 1;
+      margin-block: 16px;
+    }
+    .offer-highlight small {
+      font-size: .35em;
+      opacity: .6;
+      font-weight: 400;
+      vertical-align: middle;
+      margin-right: 4px;
+    }
+    .offer-detail { font-size: .9rem; margin-bottom: 32px; color: rgba(255,255,255,.5); }
+
+    /* ── GUARANTEE ──────────────────────────────────────────────── */
+    .guarantee-box {
+      display: flex;
+      align-items: center;
+      gap: 28px;
+      background: var(--white);
+      border: 2px solid var(--gray-mid);
+      border-radius: var(--radius-lg);
+      padding: 36px 40px;
+      max-width: 720px;
+      margin-inline: auto;
+    }
+    @media (max-width: 600px) { .guarantee-box { flex-direction: column; text-align: center; } }
+    .guarantee-icon {
+      flex-shrink: 0;
+      width: 80px;
+      height: 80px;
+      border-radius: 20px;
+      background: var(--blue-soft);
+      border: 2px solid rgba(45,108,223,.2);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2.2rem;
+    }
+    .guarantee-box h3 { margin-bottom: 8px; }
+
+    /* ── AUTHORITY ──────────────────────────────────────────────── */
+    #autoridade { background: var(--gray-light); }
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 20px;
+      margin-bottom: 48px;
+    }
+    .stat-card {
+      background: var(--white);
+      border: 1px solid var(--gray-mid);
+      border-radius: var(--radius-lg);
+      padding: 28px 20px;
+      text-align: center;
+    }
+    .stat-num {
+      font-size: clamp(2rem, 4vw, 2.8rem);
+      font-weight: 800;
+      color: var(--blue);
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+    .stat-label { font-size: .85rem; color: var(--gray-text); }
+    .authority-img {
+      background: var(--gray-mid);
+      border-radius: var(--radius-lg);
+      aspect-ratio: 16/6;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--gray-text);
+      font-size: .85rem;
+      font-family: var(--font-mono);
+      gap: 10px;
+    }
+
+    /* ── OBJECTIONS ─────────────────────────────────────────────── */
+    .objections-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 20px;
+      margin-top: 40px;
+    }
+    .objection-card {
+      background: var(--blue-soft);
+      border: 1px solid rgba(45,108,223,.2);
+      border-radius: var(--radius-lg);
+      padding: 28px 32px;
+    }
+    .objection-card .q {
+      font-size: .8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: .07em;
+      color: var(--gray-text);
+      margin-bottom: 8px;
+    }
+    .objection-card h3 { font-size: 1.05rem; color: var(--text); margin-bottom: 10px; }
+    .objection-card p { font-size: .9rem; }
+
+    /* ── COMPARE ────────────────────────────────────────────────── */
+    #comparacao { background: var(--dark); color: #fff; }
+    .compare-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 24px;
+      margin-top: 48px;
+    }
+    @media (max-width: 580px) { .compare-grid { grid-template-columns: 1fr; } }
+    .compare-card {
+      border-radius: var(--radius-lg);
+      padding: 32px;
+    }
+    .compare-card.bad {
+      background: rgba(239,68,68,.07);
+      border: 1px solid rgba(239,68,68,.2);
+    }
+    .compare-card.good {
+      background: rgba(45,108,223,.12);
+      border: 1px solid rgba(45,108,223,.35);
+    }
+    .compare-title {
+      font-size: 1rem;
+      font-weight: 800;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .compare-title.bad { color: #f87171; }
+    .compare-title.good { color: #60a5fa; }
+    .compare-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 0;
+      font-size: .9rem;
+      border-bottom: 1px solid rgba(255,255,255,.06);
+      color: rgba(255,255,255,.75);
+    }
+    .compare-item:last-child { border-bottom: none; }
+    .compare-item::before {
+      flex-shrink: 0;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .75rem;
+      font-weight: 800;
+    }
+    .compare-card.bad .compare-item::before { content: '✕'; background: rgba(239,68,68,.2); color: #f87171; }
+    .compare-card.good .compare-item::before { content: '✓'; background: rgba(45,108,223,.3); color: #60a5fa; }
+
+    /* ── FAQ ────────────────────────────────────────────────────── */
+    #faq { background: var(--gray-light); }
+    .faq-list {
+      max-width: 760px;
+      margin-inline: auto;
+      margin-top: 48px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .faq-item {
+      background: var(--white);
+      border: 1px solid var(--gray-mid);
+      border-radius: var(--radius);
+      overflow: hidden;
+      transition: border-color .2s;
+    }
+    .faq-item.open { border-color: rgba(45,108,223,.3); }
+    .faq-q {
+      width: 100%;
+      background: none;
+      border: none;
+      padding: 20px 24px;
+      text-align: left;
+      font-family: var(--font-head);
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    .faq-arrow {
+      flex-shrink: 0;
+      width: 28px;
+      height: 28px;
+      border-radius: 8px;
+      background: var(--blue-soft);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: var(--blue);
+      font-size: .85rem;
+      transition: transform .25s;
+    }
+    .faq-item.open .faq-arrow { transform: rotate(180deg); }
+    .faq-a {
+      max-height: 0;
+      overflow: hidden;
+      transition: max-height .35s ease, padding .35s ease;
+      padding-inline: 24px;
+    }
+    .faq-item.open .faq-a { max-height: 300px; padding-bottom: 20px; }
+    .faq-a p { font-size: .95rem; }
+
+    /* ── SUPPORT ────────────────────────────────────────────────── */
+    .support-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 20px;
+      margin-top: 40px;
+    }
+    .support-card {
+      background: var(--white);
+      border: 1px solid var(--gray-mid);
+      border-radius: var(--radius-lg);
+      padding: 28px 24px;
+      text-align: center;
+      transition: box-shadow .2s, transform .2s;
+    }
+    .support-card:hover { box-shadow: var(--shadow); transform: translateY(-3px); }
+    .support-icon { font-size: 2rem; margin-bottom: 12px; }
+    .support-card h4 { font-size: 1rem; margin-bottom: 6px; }
+    .support-card p { font-size: .85rem; }
+
+    /* ── PAIN ───────────────────────────────────────────────────── */
+    #dores { background: var(--dark); color: #fff; }
+    .pain-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 48px;
+      align-items: start;
+      margin-top: 48px;
+    }
+    @media (max-width: 680px) { .pain-grid { grid-template-columns: 1fr; gap: 32px; } }
+    .pain-list, .desire-list { display: flex; flex-direction: column; gap: 14px; }
+    .pain-item, .desire-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      padding: 16px 20px;
+      border-radius: 10px;
+      font-size: .95rem;
+    }
+    .pain-item { background: rgba(239,68,68,.08); border: 1px solid rgba(239,68,68,.15); color: rgba(255,255,255,.8); }
+    .desire-item { background: rgba(45,108,223,.1); border: 1px solid rgba(45,108,223,.2); color: rgba(255,255,255,.8); }
+    .pain-dot, .desire-dot {
+      flex-shrink: 0;
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: .8rem;
+      font-weight: 800;
+    }
+    .pain-dot { background: rgba(239,68,68,.2); color: #f87171; }
+    .desire-dot { background: rgba(45,108,223,.3); color: #60a5fa; }
+    .pain-col-title { font-size: .8rem; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; margin-bottom: 16px; }
+    .pain-col-title.bad { color: #f87171; }
+    .pain-col-title.good { color: #60a5fa; }
+
+    /* ── FINAL CTA ──────────────────────────────────────────────── */
+    #cta-final {
+      background: var(--blue);
+      color: #fff;
+      text-align: center;
+      padding-block: var(--section-py);
+      position: relative;
+      overflow: hidden;
+    }
+    #cta-final::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background:
+        radial-gradient(ellipse 60% 80% at 50% 100%, rgba(255,255,255,.08), transparent 60%),
+        radial-gradient(ellipse 80% 60% at 50% 0%, rgba(15,57,181,.4), transparent 60%);
+      pointer-events: none;
+    }
+    #cta-final .container { position: relative; z-index: 1; }
+    #cta-final h2 { color: #fff; margin-bottom: 16px; }
+    #cta-final p { color: rgba(255,255,255,.8); max-width: 520px; margin-inline: auto; margin-bottom: 40px; }
+    .btn--white {
+      background: #fff;
+      color: var(--blue-dark);
+      box-shadow: 0 8px 32px rgba(0,0,0,.2);
+    }
+    .btn--white:hover {
+      background: #f0f4ff;
+      transform: translateY(-2px);
+      box-shadow: 0 12px 40px rgba(0,0,0,.25);
+    }
+    .cta-meta {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 20px;
+      margin-top: 20px;
+      font-size: .82rem;
+      color: rgba(255,255,255,.65);
+      flex-wrap: wrap;
+    }
+    .cta-meta span { display: flex; align-items: center; gap: 6px; }
+
+    /* ── FOOTER ─────────────────────────────────────────────────── */
+    footer {
+      background: var(--dark);
+      color: rgba(255,255,255,.4);
+      padding-block: 32px;
+      font-size: .82rem;
+    }
+    .footer-inner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+    .footer-inner a { color: rgba(255,255,255,.5); }
+    .footer-inner a:hover { color: #fff; }
+
+    /* ── SECTION HEADERS (shared) ───────────────────────────────── */
+    .section-head { text-align: center; max-width: 680px; margin-inline: auto; }
+    .section-head h2 { margin-bottom: 16px; }
+    .section-head p { font-size: 1.05rem; }
+    .divider {
+      width: 48px;
+      height: 4px;
+      background: var(--blue);
+      border-radius: 999px;
+      margin: 20px auto;
+    }
+
+    /* ── RESPONSIVE ─────────────────────────────────────────────── */
+    @media (max-width: 480px) {
+      .btn--xl { padding: 16px 28px; font-size: 1rem; }
+      .guarantee-box { padding: 28px 24px; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ── NAV ───────────────────────────────────────────────────────── -->
+<nav>
+  <div class="container nav-inner">
+    <div class="nav-logo">iMatic: <span>Automação com iLogic</span></div>
+    <a href="#checkout" class="btn btn--primary nav-cta">Quero automatizar →</a>
+  </div>
+</nav>
+
+<!-- ── HERO ──────────────────────────────────────────────────────── -->
+<section id="hero">
+  <div class="container">
+    <div class="hero-inner">
+      <div class="hero-content fade-in">
+        <div class="tag">⚡ Autodesk Inventor + iLogic</div>
+        <p style="font-family:var(--font-mono); font-size:.88rem; color:rgba(255,255,255,.85); letter-spacing:.04em; margin-bottom:14px; background:rgba(45,108,223,.25); border:1px solid rgba(45,108,223,.5); display:inline-block; padding:6px 16px; border-radius:8px; font-weight:500;">iMatic: Automação de Peças, Montagens e Desenhos com iLogic</p>
+        <h1>Execute projetos 3D complexos em segundos — <em>sem erros, sem retrabalho</em></h1>
+        <p>Transforme horas (ou dias) de trabalho em minutos com o Método Automação Inteligente com iLogic. Precisão, controle e escala — no Autodesk Inventor.</p>
+        <a href="#checkout" class="btn btn--primary btn--xl btn-pulse">
+          Quero automatizar meus projetos 3D agora →
+        </a>
+      </div>
+      <div class="hero-img-wrap fade-in fade-in-delay-2">
+        <div class="hero-img-icon">⚙️</div>
+        <span>[Interface do sistema iLogic]</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── VIDEO ─────────────────────────────────────────────────────── -->
+<section id="video" class="section">
+  <div class="container">
+    <div class="section-head fade-in">
+      <div class="tag">📹 Apresentação</div>
+      <h2>Assista essa apresentação até o final</h2>
+      <div class="divider"></div>
+      <p>Descubra como automatizar seus projetos no Inventor e se tornar um profissional raro no mercado.</p>
+    </div>
+    <div class="video-wrap fade-in fade-in-delay-1">
+      <div class="play-btn">▶</div>
+      <span>[Vídeo de apresentação do curso]</span>
+    </div>
+    <div class="video-list fade-in fade-in-delay-2">
+      <div class="video-item">Projetos 3D completos em poucos cliques</div>
+      <div class="video-item">Redução drástica de erros humanos</div>
+      <div class="video-item">Automação de tarefas repetitivas</div>
+      <div class="video-item">Mais produtividade sem aumentar equipe</div>
+      <div class="video-item">Entrega de projetos de maior valor</div>
+      <div class="video-item">Profissional raro e valorizado</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── BENEFITS ──────────────────────────────────────────────────── -->
+<section id="beneficios" class="section section--gray">
+  <div class="container">
+    <div class="section-head fade-in">
+      <div class="tag">✅ O que você conquista</div>
+      <h2>Por que a automação muda tudo</h2>
+      <div class="divider"></div>
+      <p>Com o Método Automação Inteligente você vai além do que engenheiros, designers, desenhistas e projetistas convencionais conseguem entregar.</p>
+    </div>
+    <div class="benefits-grid">
+      <div class="benefit-card fade-in fade-in-delay-1">
+        <div class="benefit-icon">⚡</div>
+        <h3>Velocidade extrema</h3>
+        <p>Execute projetos completos — modelo 3D, montagem e desenho técnico — em minutos, não em dias.</p>
+      </div>
+      <div class="benefit-card fade-in fade-in-delay-2">
+        <div class="benefit-icon">🎯</div>
+        <h3>Zero retrabalho</h3>
+        <p>Elimine erros humanos com lógica automatizada que garante precisão em cada execução.</p>
+      </div>
+      <div class="benefit-card fade-in fade-in-delay-3">
+        <div class="benefit-icon">📈</div>
+        <h3>Escala real</h3>
+        <p>Atenda mais clientes, mais projetos e mais demandas sem precisar aumentar sua equipe.</p>
+      </div>
+      <div class="benefit-card fade-in fade-in-delay-1">
+        <div class="benefit-icon">💎</div>
+        <h3>Valor agregado</h3>
+        <p>Entregue projetos mais complexos e de maior qualidade, justificando preços mais altos.</p>
+      </div>
+      <div class="benefit-card fade-in fade-in-delay-2">
+        <div class="benefit-icon">🏆</div>
+        <h3>Diferencial competitivo</h3>
+        <p>Seja um dos poucos profissionais do mercado que domina modelização 3D e automação no Inventor.</p>
+      </div>
+      <div class="benefit-card fade-in fade-in-delay-3">
+        <div class="benefit-icon">🧠</div>
+        <h3>Controle total</h3>
+        <p>Você define os parâmetros — o sistema executa. Nenhuma surpresa, nenhum erro inesperado.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── CTA MID ────────────────────────────────────────────────────── -->
+<section class="section section--blue" style="text-align:center; padding-block: 64px;">
+  <div class="container fade-in">
+    <h2 style="color:#fff; margin-bottom:12px;">Pronto para automatizar seus projetos?</h2>
+    <p style="margin-bottom:32px; max-width:480px; margin-inline:auto;">Junte-se aos profissionais que já transformaram sua produtividade com iLogic.</p>
+    <a href="#checkout" class="btn btn--white btn--xl">Quero automatizar meus projetos 3D agora →</a>
+  </div>
+</section>
+
+<!-- ── DEMO ───────────────────────────────────────────────────────── -->
+<section id="demonstracao" class="section section--dark">
+  <div class="container">
+    <div class="section-head fade-in">
+      <div class="tag">🔬 Como funciona</div>
+      <h2>Da complexidade à entrega — em minutos</h2>
+      <div class="divider"></div>
+    </div>
+    <div class="demo-grid">
+      <div class="demo-steps fade-in fade-in-delay-1">
+        <div class="demo-step">
+          <div class="demo-num">1</div>
+          <div>
+            <h4>Você recebe o projeto</h4>
+            <p>Dezenas ou centenas de peças. Complexidade total. Qualquer projeto industrial real.</p>
+          </div>
+        </div>
+        <div class="demo-step">
+          <div class="demo-num">2</div>
+          <div>
+            <h4>Define os parâmetros</h4>
+            <p>Preenche um formulário simples. Sem código, sem complexidade técnica desnecessária.</p>
+          </div>
+        </div>
+        <div class="demo-step">
+          <div class="demo-num">3</div>
+          <div>
+            <h4>Executa o sistema</h4>
+            <p>Um clique. O iLogic processa toda a lógica automática que você programou.</p>
+          </div>
+        </div>
+        <div class="demo-step">
+          <div class="demo-num">4</div>
+          <div>
+            <h4>Entrega o projeto completo</h4>
+            <p>Modelo, montagem e desenhos técnicos prontos. Resultado perfeito, sem retrabalho.</p>
+          </div>
+        </div>
+      </div>
+      <div class="demo-result fade-in fade-in-delay-2">
+        <h4>Resultado gerado automaticamente</h4>
+        <div class="result-item">
+          <div class="result-icon">🧱</div>
+          <span>Modelo 3D completo</span>
+          <span class="result-badge green">✓ Pronto</span>
+        </div>
+        <div class="result-item">
+          <div class="result-icon">🔩</div>
+          <span>Montagem estruturada</span>
+          <span class="result-badge green">✓ Pronto</span>
+        </div>
+        <div class="result-item">
+          <div class="result-icon">📐</div>
+          <span>Desenhos técnicos</span>
+          <span class="result-badge green">✓ Pronto</span>
+        </div>
+        <div class="result-item">
+          <div class="result-icon">⚙️</div>
+          <span>Parâmetros documentados</span>
+          <span class="result-badge green">✓ Pronto</span>
+        </div>
+        <div class="result-item" style="margin-top:8px; padding-top:20px; border-top:1px solid rgba(255,255,255,.1); border-bottom:none;">
+          <div style="color:rgba(255,255,255,.5); font-size:.82rem; font-family:var(--font-mono);">Tempo total:</div>
+          <span style="margin-left:auto; font-family:var(--font-mono); color:#60a5fa; font-weight:700;">~5 minutos</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOR WHOM ───────────────────────────────────────────────────── -->
+<section id="publico" class="section">
+  <div class="container">
+    <div class="section-head fade-in">
+      <div class="tag">👥 Para quem é</div>
+      <h2>Este método foi feito para você</h2>
+      <div class="divider"></div>
+      <p>Se você trabalha com projetos 3D e quer aumentar produtividade eliminando o retrabalho, este curso é seu próximo passo.</p>
+    </div>
+    <div class="audience-grid">
+      <div class="audience-card fade-in fade-in-delay-1">
+        <div class="audience-icon">🔧</div>
+        <h4>Engenheiros</h4>
+      </div>
+      <div class="audience-card fade-in fade-in-delay-2">
+        <div class="audience-icon">🎨</div>
+        <h4>Designers Industriais</h4>
+      </div>
+      <div class="audience-card fade-in fade-in-delay-3">
+        <div class="audience-icon">📐</div>
+        <h4>Projetistas 3D</h4>
+      </div>
+      <div class="audience-card fade-in fade-in-delay-4">
+        <div class="audience-icon">💼</div>
+        <h4>Freelancers</h4>
+      </div>
+      <div class="audience-card fade-in fade-in-delay-5">
+        <div class="audience-icon">🎓</div>
+        <h4>Estudantes</h4>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── PRODUCT ────────────────────────────────────────────────────── -->
+<section id="produto" class="section section--gray">
+  <div class="container">
+    <div class="section-head fade-in">
+      <div class="tag">📚 O produto</div>
+      <h2>Curso 100% prático — do zero à automação completa</h2>
+      <div class="divider"></div>
+      <p>Aulas gravadas, projeto real, aplicação imediata. Você aprende fazendo.</p>
+    </div>
+    <div class="modules-grid">
+      <div class="module-card fade-in fade-in-delay-1">
+        <div class="module-num">MÓDULO 01</div>
+        <h3>iLogic Part</h3>
+        <p>Automatize peças individuais. Domine os fundamentos do iLogic criando regras inteligentes para modelos paramétricos.</p>
+      </div>
+      <div class="module-card fade-in fade-in-delay-2">
+        <div class="module-num">MÓDULO 02</div>
+        <h3>iLogic Assembly</h3>
+        <p>Leve a automação para montagens completas. Controle múltiplas peças, restrições e configurações com uma única execução.</p>
+      </div>
+      <div class="module-card fade-in fade-in-delay-3">
+        <div class="module-num">MÓDULO 03</div>
+        <h3>iLogic Drawing</h3>
+        <p>Automatize a geração de desenhos técnicos. Views, cotas, títulos e folhas — tudo criado automaticamente.</p>
+      </div>
+    </div>
+    <div style="margin-top: 48px;" class="fade-in">
+      <p class="eyebrow" style="text-align:center; margin-bottom:16px;">Bônus incluídos</p>
+      <div class="bonus-list">
+        <div class="bonus-item">Criação de estilos de materiais personalizados</div>
+        <div class="bonus-item">Botões personalizados</div>
+        <div class="bonus-item">Templates prontos</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── OFFER ──────────────────────────────────────────────────────── -->
+<section id="oferta" class="section section--dark">
+  <div class="container">
+    <div class="section-head fade-in" style="color:#fff;">
+      <div class="tag">💰 Oferta especial</div>
+      <h2 style="color:#fff;">Acesso completo ao método</h2>
+      <div class="divider"></div>
+    </div>
+    <div class="offer-box fade-in fade-in-delay-1" id="checkout">
+      <p style="color:rgba(255,255,255,.5); font-size:.85rem; margin-bottom:4px;">Investimento único</p>
+      <div class="offer-highlight"><small>R$</small>697</div>
+      <p class="offer-detail">ou em até 12x no cartão de crédito</p>
+      <a href="#checkout" class="btn btn--primary btn--xl btn-pulse" style="width:100%; justify-content:center;">
+        Quero automatizar meus projetos agora →
+      </a>
+      <div style="margin-top:20px; font-size:.82rem; color:rgba(255,255,255,.4); display:flex; gap:16px; justify-content:center; flex-wrap:wrap;">
+        <span>🔒 Pagamento seguro</span>
+        <span>✅ Acesso imediato</span>
+        <span>🛡️ Garantia 7 dias</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── GUARANTEE ──────────────────────────────────────────────────── -->
+<section id="garantia" class="section">
+  <div class="container">
+    <div class="guarantee-box fade-in">
+      <div class="guarantee-icon">🛡️</div>
+      <div>
+        <div class="eyebrow">Garantia incondicional</div>
+        <h3>7 dias de garantia total</h3>
+        <p>Se por qualquer motivo você não ficar satisfeito nos primeiros 7 dias, devolvemos 100% do seu investimento — sem perguntas, sem burocracia.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── AUTHORITY ──────────────────────────────────────────────────── -->
+<section id="autoridade" class="section section--gray">
+  <div class="container">
+    <div class="section-head fade-in">
+      <div class="tag">🏅 Autoridade</div>
+      <h2>Quem está por trás do método</h2>
+      <div class="divider"></div>
+      <p>Expertise construída em mais de 16 anos de atuação real na indústria, incluindo experiência no Canadá.</p>
+    </div>
+    <div class="stats-grid">
+      <div class="stat-card fade-in fade-in-delay-1">
+        <div class="stat-num">10+</div>
+        <div class="stat-label">Anos de experiência</div>
+      </div>
+      <div class="stat-card fade-in fade-in-delay-2">
+        <div class="stat-num">1.500+</div>
+        <div class="stat-label">Alunos formados</div>
+      </div>
+      <div class="stat-card fade-in fade-in-delay-3">
+        <div class="stat-num">🇨🇦</div>
+        <div class="stat-label">Experiência no Canadá</div>
+      </div>
+      <div class="stat-card fade-in fade-in-delay-4">
+        <div class="stat-num">100%</div>
+        <div class="stat-label">Indústria real</div>
+      </div>
+    </div>
+    <div class="authority-img fade-in">
+      <span>📸</span>
+      <span>[Imagem do instrutor / projeto real]</span>
+    </div>
+  </div>
+</section>
+
+<!-- ── OBJECTIONS ─────────────────────────────────────────────────── -->
+<section id="objecoes" class="section">
+  <div class="container">
+    <div class="section-head fade-in">
+      <div class="tag">💬 Suas dúvidas</div>
+      <h2>Quebrando as barreiras de entrada</h2>
+      <div class="divider"></div>
+    </div>
+    <div class="objections-grid">
+      <div class="objection-card fade-in fade-in-delay-1">
+        <div class="q">Objeção #1</div>
+        <h3>"Preciso saber programação?"</h3>
+        <p>Não. O método foi desenhado para que qualquer profissional de projetos possa aplicar desde o início, sem background técnico em código.</p>
+      </div>
+      <div class="objection-card fade-in fade-in-delay-2">
+        <div class="q">Objeção #2</div>
+        <h3>"Sou iniciante, serve pra mim?"</h3>
+        <p>Sim. O curso parte do zero, com didática progressiva. Se você usa o Inventor, você já está pronto para começar.</p>
+      </div>
+      <div class="objection-card fade-in fade-in-delay-3">
+        <div class="q">Objeção #3</div>
+        <h3>"Quando vejo resultado?"</h3>
+        <p>Aplicação imediata. Já nas primeiras aulas você cria automações reais que podem ser usadas nos seus projetos do dia a dia.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── COMPARE ────────────────────────────────────────────────────── -->
+<section id="comparacao" class="section section--dark">
+  <div class="container">
+    <div class="section-head fade-in" style="color:#fff;">
+      <div class="tag">⚖️ Comparação</div>
+      <h2 style="color:#fff;">Antes vs. Depois da automação</h2>
+      <div class="divider"></div>
+    </div>
+    <div class="compare-grid">
+      <div class="compare-card bad fade-in fade-in-delay-1">
+        <div class="compare-title bad">❌ Sem automação</div>
+        <div class="compare-item">Trabalho 100% manual e repetitivo</div>
+        <div class="compare-item">Projetos levam horas ou dias</div>
+        <div class="compare-item">Erros constantes e retrabalho</div>
+        <div class="compare-item">Produtividade limitada</div>
+        <div class="compare-item">Dificuldade de escalar</div>
+        <div class="compare-item">Profissional substituível</div>
+      </div>
+      <div class="compare-card good fade-in fade-in-delay-2">
+        <div class="compare-title good">✅ Com automação</div>
+        <div class="compare-item">Projetos completos em minutos</div>
+        <div class="compare-item">Precisão garantida em cada execução</div>
+        <div class="compare-item">Zero retrabalho, zero erros</div>
+        <div class="compare-item">Alta produtividade e escalabilidade</div>
+        <div class="compare-item">Mais projetos, mais receita</div>
+        <div class="compare-item">Profissional raro e valorizado</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── PAIN / DESIRE ──────────────────────────────────────────────── -->
+<section id="dores" class="section section--dark">
+  <div class="container">
+    <div class="section-head fade-in" style="color:#fff;">
+      <div class="tag">🎯 Dores e desejos</div>
+      <h2 style="color:#fff;">Você reconhece essa realidade?</h2>
+      <div class="divider"></div>
+    </div>
+    <div class="pain-grid">
+      <div class="fade-in fade-in-delay-1">
+        <div class="pain-col-title bad">⚠️ Suas dores hoje</div>
+        <div class="pain-list">
+          <div class="pain-item"><div class="pain-dot">✕</div>Refazer projetos do zero por erros simples</div>
+          <div class="pain-item"><div class="pain-dot">✕</div>Perder horas em tarefas mecânicas e repetitivas</div>
+          <div class="pain-item"><div class="pain-dot">✕</div>Erros que aparecem só no final do projeto</div>
+          <div class="pain-item"><div class="pain-dot">✕</div>Sensação de não conseguir avançar na carreira</div>
+        </div>
+      </div>
+      <div class="fade-in fade-in-delay-2">
+        <div class="pain-col-title good">✨ O que você vai conquistar</div>
+        <div class="desire-list">
+          <div class="desire-item"><div class="desire-dot">✓</div>Alta produtividade com processos automatizados</div>
+          <div class="desire-item"><div class="desire-dot">✓</div>Domínio completo sobre seus projetos</div>
+          <div class="desire-item"><div class="desire-dot">✓</div>Reconhecimento como especialista no mercado</div>
+          <div class="desire-item"><div class="desire-dot">✓</div>Mais tempo, mais projetos, mais receita</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FAQ ────────────────────────────────────────────────────────── -->
+<section id="faq" class="section section--gray">
+  <div class="container">
+    <div class="section-head fade-in">
+      <div class="tag">❓ Perguntas frequentes</div>
+      <h2>Tire suas dúvidas</h2>
+      <div class="divider"></div>
+    </div>
+    <div class="faq-list fade-in fade-in-delay-1">
+      <div class="faq-item">
+        <button class="faq-q">
+          Preciso saber programação para fazer o curso?
+          <span class="faq-arrow">▼</span>
+        </button>
+        <div class="faq-a">
+          <p>Não. O iLogic usa uma linguagem visual e simplificada baseada em VBA. O curso ensina tudo do zero, com foco prático e aplicado. Qualquer profissional de engenharia, design, ou projetos CAD, assim como estudante consegue aprender.</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">
+          O método funciona em outros softwares além do Inventor?
+          <span class="faq-arrow">▼</span>
+        </button>
+        <div class="faq-a">
+          <p>Os conceitos de automação paramétrica se aplicam a outros softwares CAD, mas as implementações práticas são específicas para o Autodesk Inventor. A lógica que você aprende, no entanto, é transferível.</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">
+          Quanto tempo até ver resultados práticos?
+          <span class="faq-arrow">▼</span>
+        </button>
+        <div class="faq-a">
+          <p>Aplicação imediata. Já nas primeiras aulas você criará automações reais. Em poucas horas de estudo, você já terá scripts funcionando nos seus projetos do dia a dia.</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">
+          Por quanto tempo tenho acesso ao conteúdo?
+          <span class="faq-arrow">▼</span>
+        </button>
+        <div class="faq-a">
+          <p>O acesso é vitalício. Você estuda no seu ritmo, revisa quantas vezes quiser e ainda recebe atualizações futuras sem custo adicional.</p>
+        </div>
+      </div>
+      <div class="faq-item">
+        <button class="faq-q">
+          Como funciona a garantia de 14 dias?
+          <span class="faq-arrow">▼</span>
+        </button>
+        <div class="faq-a">
+          <p>É incondicional. Se dentro de 14 dias você não estiver satisfeito por qualquer motivo, basta entrar em contato e devolvemos 100% do valor investido. Sem questionamentos.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── SUPPORT ────────────────────────────────────────────────────── -->
+<section id="suporte" class="section">
+  <div class="container">
+    <div class="section-head fade-in">
+      <div class="tag">🤝 Suporte</div>
+      <h2>Você nunca fica sozinho</h2>
+      <div class="divider"></div>
+      <p>Contamos com múltiplos canais para que você tire dúvidas, avance com confiança e entregue resultados.</p>
+    </div>
+    <div class="support-grid">
+      <div class="support-card fade-in fade-in-delay-1">
+        <div class="support-icon">💬</div>
+        <h4>WhatsApp</h4>
+        <p>Suporte direto e rápido para dúvidas pontuais durante os seus estudos.</p>
+      </div>
+      <div class="support-card fade-in fade-in-delay-2">
+        <div class="support-icon">📧</div>
+        <h4>E-mail</h4>
+        <p>Canal oficial para questões mais detalhadas com resposta em até 24 horas.</p>
+      </div>
+      <div class="support-card fade-in fade-in-delay-3">
+        <div class="support-icon">👥</div>
+        <h4>Comunidade</h4>
+        <p>Grupo exclusivo de alunos para troca de experiências, projetos e networking.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FINAL CTA ──────────────────────────────────────────────────── -->
+<section id="cta-final">
+  <div class="container">
+    <div class="fade-in">
+      <div class="tag">🚀 Próximo passo</div>
+      <h2>Comece agora. Entregue mais amanhã.</h2>
+      <p>Automatize seus projetos no Autodesk Inventor e transforme horas de trabalho em minutos — com precisão, controle e escala.</p>
+      <a href="#checkout" class="btn btn--white btn--xl btn-pulse">
+        Quero automatizar meus projetos agora →
+      </a>
+      <div class="cta-meta">
+        <span>🛡️ Garantia de 7 dias</span>
+        <span>🔒 Pagamento 100% seguro</span>
+        <span>✅ Acesso imediato</span>
+        <span>♾️ Acesso vitalício</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ─────────────────────────────────────────────────────── -->
+<footer>
+  <div class="container footer-inner">
+    <div>© 2025 iLogic Automação Inteligente. Todos os direitos reservados.</div>
+    <div style="display:flex; gap:20px;">
+      <a href="#">Política de Privacidade</a>
+      <a href="#">Termos de Uso</a>
+    </div>
+  </div>
+</footer>
+
+<!-- ── JS ─────────────────────────────────────────────────────────── -->
+<script>
+  /* Intersection Observer — fade-in */
+  const observer = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        e.target.classList.add('visible');
+        observer.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.12 });
+
+  document.querySelectorAll('.fade-in').forEach(el => observer.observe(el));
+
+  /* FAQ accordion */
+  document.querySelectorAll('.faq-q').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const item = btn.closest('.faq-item');
+      const isOpen = item.classList.contains('open');
+      document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
+      if (!isOpen) item.classList.add('open');
+    });
+  });
+
+  /* Nav: hide on scroll down, show on scroll up */
+  let lastY = 0;
+  const nav = document.querySelector('nav');
+  window.addEventListener('scroll', () => {
+    const y = window.scrollY;
+    nav.style.transform = (y > lastY && y > 80) ? 'translateY(-100%)' : 'translateY(0)';
+    lastY = y;
+  }, { passive: true });
+</script>
+</body>
+</html>
