@@ -913,7 +913,7 @@
         <h1 style="text-align:center;">Execute projetos 3D complexos em segundos — <em>sem erros, sem retrabalho</em></h1>
       </div>
       <div class="hero-img-wrap fade-in fade-in-delay-2">
-        <img src="images/luminaire.jpg" alt="Modelo 3D automatizado com iLogic no Autodesk Inventor" style="width:100%; height:100%; object-fit:cover; border-radius:calc(var(--radius-lg) - 1px);" />
+        <img src="luminaire.jpg" alt="Modelo 3D automatizado com iLogic no Autodesk Inventor" style="width:100%; height:100%; object-fit:cover; border-radius:calc(var(--radius-lg) - 1px);" />
       </div>
       <div class="hero-content fade-in" style="text-align:center;">
         <p style="margin-inline:auto;">Transforme horas (ou dias) de trabalho em minutos com o Método Automação Inteligente com iLogic. Precisão, controle e escala — no Autodesk Inventor.</p>
@@ -934,10 +934,24 @@
       <div class="divider"></div>
       <p>Descubra como automatizar seus projetos no Inventor e se tornar um profissional raro no mercado.</p>
     </div>
-    <div class="video-wrap fade-in fade-in-delay-1">
-      <img src="images/video-vendas.jpg" alt="Vídeo de apresentação do curso iMatic" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:0;" />
-      <div style="position:absolute; inset:0; background:rgba(10,15,31,.45); z-index:1;"></div>
-      <div class="play-btn" style="position:relative; z-index:2;">▶</div>
+    <div class="video-wrap fade-in fade-in-delay-1" style="background:#000; cursor:pointer;" id="videoWrap">
+      <video
+        id="heroVideo"
+        src="video-boas-vindas.mp4"
+        poster="video-vendas.jpg"
+        style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:0; display:none;"
+        controls
+        preload="none"
+      ></video>
+      <img
+        src="video-vendas.jpg"
+        alt="Thumbnail do vídeo de apresentação iMatic"
+        id="videoThumb"
+        style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:0;"
+        onerror="this.style.display='none'"
+      />
+      <div id="videoOverlay" style="position:absolute; inset:0; background:rgba(10,15,31,.45); z-index:1;"></div>
+      <div class="play-btn" id="playBtn" style="position:relative; z-index:2;">▶</div>
     </div>
     <div class="video-list fade-in fade-in-delay-2">
       <div class="video-item">Projetos 3D completos em poucos cliques</div>
@@ -1447,6 +1461,22 @@
       if (!isOpen) item.classList.add('open');
     });
   });
+
+  /* Video player */
+  const playBtn   = document.getElementById('playBtn');
+  const heroVideo = document.getElementById('heroVideo');
+  const videoThumb = document.getElementById('videoThumb');
+  const videoOverlay = document.getElementById('videoOverlay');
+
+  if (playBtn && heroVideo) {
+    playBtn.addEventListener('click', () => {
+      heroVideo.style.display = 'block';
+      if (videoThumb) videoThumb.style.display = 'none';
+      if (videoOverlay) videoOverlay.style.display = 'none';
+      playBtn.style.display = 'none';
+      heroVideo.play();
+    });
+  }
 
   /* Nav: hide on scroll down, show on scroll up */
   let lastY = 0;
