@@ -11,16 +11,18 @@
   <style>
     /* ── VARIABLES ─────────────────────────────────────────────── */
     :root {
-      --blue:        #2D6CDF;
-      --blue-dark:   #1A4ED8;
-      --blue-deeper: #0F39B5;
-      --blue-soft:   #EEF3FD;
+      --blue:        #2E6BFF;
+      --blue-dark:   #1547D6;
+      --blue-deeper: #0B2FA8;
+      --blue-soft:   #EAF0FF;
+      --accent:      #00D9C6;
+      --accent-dark: #00B3A3;
       --white:       #FFFFFF;
       --gray-light:  #F5F7FA;
       --gray-mid:    #E4E9F2;
       --gray-text:   #6B7A99;
-      --dark:        #0D1526;
-      --dark-mid:    #1C2A47;
+      --dark:        #0A0F1F;
+      --dark-mid:    #16213E;
       --text:        #1E2D4D;
 
       --font-head: 'Sora', sans-serif;
@@ -118,14 +120,14 @@
       text-align: center;
     }
     .btn--primary {
-      background: var(--blue-dark);
+      background: linear-gradient(135deg, var(--blue) 0%, var(--blue-dark) 100%);
       color: #fff;
-      box-shadow: 0 6px 24px rgba(26,78,216,.35);
+      box-shadow: 0 6px 24px rgba(21,71,214,.35);
     }
     .btn--primary:hover {
-      background: var(--blue-deeper);
+      background: linear-gradient(135deg, var(--blue-dark) 0%, var(--blue-deeper) 100%);
       transform: translateY(-2px);
-      box-shadow: 0 10px 32px rgba(26,78,216,.45);
+      box-shadow: 0 10px 32px rgba(21,71,214,.45);
     }
     .btn--primary:active { transform: translateY(0); }
     .btn--ghost {
@@ -140,8 +142,8 @@
       animation: pulse 2.4s ease-in-out infinite;
     }
     @keyframes pulse {
-      0%,100% { box-shadow: 0 6px 24px rgba(26,78,216,.35); }
-      50%      { box-shadow: 0 8px 40px rgba(26,78,216,.55); }
+      0%,100% { box-shadow: 0 6px 24px rgba(21,71,214,.35); }
+      50%      { box-shadow: 0 10px 44px rgba(0,217,198,.4), 0 8px 32px rgba(21,71,214,.4); }
     }
 
     /* ── FADE-IN (Intersection Observer) ──────────────────────── */
@@ -188,7 +190,8 @@
     #hero {
       background: var(--dark);
       color: #fff;
-      padding-block: clamp(80px, 10vw, 140px);
+      padding-top: clamp(32px, 4vw, 56px);
+      padding-bottom: clamp(60px, 8vw, 100px);
       position: relative;
       overflow: hidden;
     }
@@ -197,8 +200,8 @@
       position: absolute;
       inset: 0;
       background:
-        radial-gradient(ellipse 80% 60% at 70% 50%, rgba(45,108,223,.22) 0%, transparent 70%),
-        radial-gradient(ellipse 40% 40% at 20% 80%, rgba(26,78,216,.15) 0%, transparent 60%);
+        radial-gradient(ellipse 80% 60% at 70% 50%, rgba(46,107,255,.26) 0%, transparent 70%),
+        radial-gradient(ellipse 45% 45% at 15% 85%, rgba(0,217,198,.14) 0%, transparent 60%);
       pointer-events: none;
     }
     /* grid pattern */
@@ -206,29 +209,29 @@
       content: '';
       position: absolute;
       inset: 0;
-      background-image: linear-gradient(rgba(45,108,223,.06) 1px, transparent 1px),
-                        linear-gradient(90deg, rgba(45,108,223,.06) 1px, transparent 1px);
+      background-image: linear-gradient(rgba(46,107,255,.07) 1px, transparent 1px),
+                        linear-gradient(90deg, rgba(46,107,255,.07) 1px, transparent 1px);
       background-size: 40px 40px;
       pointer-events: none;
     }
     .hero-inner {
       position: relative;
       z-index: 1;
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 60px;
-      align-items: center;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
     }
-    @media (max-width: 768px) {
-      .hero-inner { grid-template-columns: 1fr; gap: 40px; }
-    }
+    .hero-content p { max-width: 640px; }
     .hero-content h1 {
       color: #fff;
-      margin-bottom: 24px;
+      margin-bottom: 8px;
     }
     .hero-content h1 em {
       font-style: normal;
-      color: var(--blue);
+      background: linear-gradient(90deg, #5B8CFF 0%, var(--accent) 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
     }
     .hero-content p {
       color: rgba(255,255,255,.75);
@@ -240,7 +243,7 @@
       background: var(--dark-mid);
       border: 1px solid rgba(45,108,223,.3);
       border-radius: var(--radius-lg);
-      aspect-ratio: 4/3;
+      aspect-ratio: 16/9;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -482,7 +485,7 @@
       position: absolute;
       top: 0; left: 0; right: 0;
       height: 4px;
-      background: var(--blue);
+      background: linear-gradient(90deg, var(--blue), var(--accent));
     }
     .module-num {
       font-family: var(--font-mono);
@@ -531,14 +534,19 @@
       content: '';
       position: absolute;
       inset: 0;
-      background: radial-gradient(ellipse at 50% 0%, rgba(45,108,223,.18), transparent 60%);
+      background:
+        radial-gradient(ellipse at 50% 0%, rgba(46,107,255,.22), transparent 60%),
+        radial-gradient(ellipse at 20% 100%, rgba(0,217,198,.1), transparent 55%);
       pointer-events: none;
     }
     .offer-box h2 { color: #fff; margin-bottom: 8px; }
     .offer-highlight {
       font-size: clamp(3rem, 8vw, 5rem);
       font-weight: 800;
-      color: #fff;
+      background: linear-gradient(90deg, #fff 0%, #cfe0ff 100%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
       line-height: 1;
       margin-block: 16px;
     }
@@ -875,7 +883,7 @@
     .divider {
       width: 48px;
       height: 4px;
-      background: var(--blue);
+      background: linear-gradient(90deg, var(--blue), var(--accent));
       border-radius: 999px;
       margin: 20px auto;
     }
@@ -892,7 +900,7 @@
 <!-- ── NAV ───────────────────────────────────────────────────────── -->
 <nav>
   <div class="container nav-inner">
-    <div class="nav-logo">iMatic: <span>Automação com iLogic</span></div>
+    <div class="nav-logo">iMatic: <span>Automação de Peças, Montagens e Desenhos com iLogic</span></div>
     <a href="https://pay.hotmart.com/I105022391N" target="_blank" rel="noopener" class="btn btn--primary nav-cta">Quero automatizar →</a>
   </div>
 </nav>
@@ -902,17 +910,16 @@
   <div class="container">
     <div class="hero-inner">
       <div class="hero-content fade-in">
-        <div class="tag">⚡ Autodesk Inventor + iLogic</div>
-        <p style="font-family:var(--font-mono); font-size:.88rem; color:rgba(255,255,255,.85); letter-spacing:.04em; margin-bottom:14px; background:rgba(45,108,223,.25); border:1px solid rgba(45,108,223,.5); display:inline-block; padding:6px 16px; border-radius:8px; font-weight:500;">iMatic: Automação de Peças, Montagens e Desenhos com iLogic</p>
-        <h1>Execute projetos 3D complexos em segundos — <em>sem erros, sem retrabalho</em></h1>
-        <p>Transforme horas (ou dias) de trabalho em minutos com o Método Automação Inteligente com iLogic. Precisão, controle e escala — no Autodesk Inventor.</p>
+        <h1 style="text-align:center;">Execute projetos 3D complexos em segundos — <em>sem erros, sem retrabalho</em></h1>
+      </div>
+      <div class="hero-img-wrap fade-in fade-in-delay-2">
+        <img src="images/luminaire.jpg" alt="Modelo 3D automatizado com iLogic no Autodesk Inventor" style="width:100%; height:100%; object-fit:cover; border-radius:calc(var(--radius-lg) - 1px);" />
+      </div>
+      <div class="hero-content fade-in" style="text-align:center;">
+        <p style="margin-inline:auto;">Transforme horas (ou dias) de trabalho em minutos com o Método Automação Inteligente com iLogic. Precisão, controle e escala — no Autodesk Inventor.</p>
         <a href="https://pay.hotmart.com/I105022391N" target="_blank" rel="noopener" class="btn btn--primary btn--xl btn-pulse">
           Quero automatizar meus projetos 3D agora →
         </a>
-      </div>
-      <div class="hero-img-wrap fade-in fade-in-delay-2">
-        <div class="hero-img-icon">⚙️</div>
-        <span>[Interface do sistema iLogic]</span>
       </div>
     </div>
   </div>
@@ -928,8 +935,9 @@
       <p>Descubra como automatizar seus projetos no Inventor e se tornar um profissional raro no mercado.</p>
     </div>
     <div class="video-wrap fade-in fade-in-delay-1">
-      <div class="play-btn">▶</div>
-      <span>[Vídeo de apresentação do curso]</span>
+      <img src="images/video-vendas.jpg" alt="Vídeo de apresentação do curso iMatic" style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:0;" />
+      <div style="position:absolute; inset:0; background:rgba(10,15,31,.45); z-index:1;"></div>
+      <div class="play-btn" style="position:relative; z-index:2;">▶</div>
     </div>
     <div class="video-list fade-in fade-in-delay-2">
       <div class="video-item">Projetos 3D completos em poucos cliques</div>
@@ -955,7 +963,7 @@
       <div class="benefit-card fade-in fade-in-delay-1">
         <div class="benefit-icon">⚡</div>
         <h3>Velocidade extrema</h3>
-        <p>Execute projetos completos — modelo 3D, montagem e desenho técnico — em minutos, não em dias.</p>
+        <p>Crie projetos completos e automatizados — modelização 3D, montagem e desenho técnico — em minutos, não em dias.</p>
       </div>
       <div class="benefit-card fade-in fade-in-delay-2">
         <div class="benefit-icon">🎯</div>
@@ -1016,7 +1024,7 @@
           <div class="demo-num">2</div>
           <div>
             <h4>Define os parâmetros</h4>
-            <p>Preenche um formulário simples. Sem código, sem complexidade técnica desnecessária.</p>
+            <p>Preenche um formulário simples. Sem complexidade técnica desnecessária.</p>
           </div>
         </div>
         <div class="demo-step">
@@ -1128,7 +1136,7 @@
     <div style="margin-top: 48px;" class="fade-in">
       <p class="eyebrow" style="text-align:center; margin-bottom:16px;">Bônus incluídos</p>
       <div class="bonus-list">
-        <div class="bonus-item">Criação de estilos de materiais personalizados</div>
+        <div class="bonus-item">Criação de estilos personalizados</div>
         <div class="bonus-item">Botões personalizados</div>
         <div class="bonus-item">Templates prontos</div>
       </div>
@@ -1146,7 +1154,7 @@
     </div>
     <div class="offer-box fade-in fade-in-delay-1" id="checkout">
       <p style="color:rgba(255,255,255,.5); font-size:.85rem; margin-bottom:4px;">Investimento único</p>
-      <div class="offer-highlight"><small>R$</small>697</div>
+      <div class="offer-highlight"><small>R$</small>1.497</div>
       <p class="offer-detail">ou em até 12x no cartão de crédito</p>
       <a href="https://pay.hotmart.com/I105022391N" target="_blank" rel="noopener" class="btn btn--primary btn--xl btn-pulse" style="width:100%; justify-content:center;">
         Quero automatizar meus projetos agora →
@@ -1345,11 +1353,11 @@
       </div>
       <div class="faq-item">
         <button class="faq-q">
-          Como funciona a garantia de 14 dias?
+          Como funciona a garantia de 7 dias?
           <span class="faq-arrow">▼</span>
         </button>
         <div class="faq-a">
-          <p>É incondicional. Se dentro de 14 dias você não estiver satisfeito por qualquer motivo, basta entrar em contato e devolvemos 100% do valor investido. Sem questionamentos.</p>
+          <p>É incondicional. Se dentro de 7 dias você não estiver satisfeito por qualquer motivo, basta entrar em contato e devolvemos 100% do valor investido. Sem questionamentos.</p>
         </div>
       </div>
     </div>
@@ -1408,7 +1416,7 @@
 <!-- ── FOOTER ─────────────────────────────────────────────────────── -->
 <footer>
   <div class="container footer-inner">
-    <div>© 2025 iLogic Automação Inteligente. Todos os direitos reservados.</div>
+    <div>© 2026 iMatic - Automação de Peças, Montagens e Desenhos com iLogic. Todos os direitos reservados.</div>
     <div style="display:flex; gap:20px;">
       <a href="#">Política de Privacidade</a>
       <a href="#">Termos de Uso</a>
