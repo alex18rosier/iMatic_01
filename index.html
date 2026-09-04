@@ -273,48 +273,88 @@
       font-size: 1.6rem;
     }
 
-    /* ── VIDEO SECTION ──────────────────────────────────────────── */
-    #video { padding-block: var(--section-py); }
-    .video-wrap {
-      background: var(--dark);
-      border-radius: var(--radius-lg);
-      aspect-ratio: 16/9;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      flex-direction: column;
-      gap: 16px;
-      color: rgba(255,255,255,.4);
-      font-family: var(--font-mono);
-      font-size: .9rem;
+    /* ── CUSTOM PLAYER ─────────────────────────────────────────── */
+    .vsl-wrap {
       max-width: 820px;
       margin-inline: auto;
-      border: 1px solid rgba(45,108,223,.2);
-      position: relative;
+      border-radius: var(--radius-lg);
       overflow: hidden;
+      border: 1px solid rgba(45,108,223,.2);
+      background: #000;
+      position: relative;
+      user-select: none;
+      box-shadow: 0 12px 48px rgba(0,0,0,0.5);
     }
-    .video-wrap::before {
-      content: '';
+    .vsl-video-area {
+      position: relative;
+      aspect-ratio: 16/9;
+      background: #000;
+    }
+    .vsl-video-area iframe {
       position: absolute;
       inset: 0;
-      background: radial-gradient(ellipse at 50% 50%, rgba(45,108,223,.1), transparent 65%);
+      width: 100%;
+      height: 100%;
+      border: none;
     }
-    .play-btn {
-      width: 72px;
-      height: 72px;
+    /* thumbnail */
+    .vsl-thumb {
+      position: absolute;
+      inset: 0;
+      z-index: 3;
+      object-fit: cover;
+      width: 100%;
+      height: 100%;
+      transition: opacity .4s ease;
+    }
+    .vsl-thumb.hidden { opacity: 0; pointer-events: none; }
+    .vsl-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 4;
+      background: rgba(10,15,31,.5);
+      transition: opacity .4s ease;
+    }
+    .vsl-overlay.hidden { opacity: 0; pointer-events: none; }
+    /* play button */
+    .vsl-play-btn {
+      position: absolute;
+      inset: 0;
+      z-index: 5;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 14px;
+      cursor: pointer;
+    }
+    .vsl-play-btn .circle {
+      width: 80px;
+      height: 80px;
       border-radius: 50%;
       background: var(--blue);
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.6rem;
+      font-size: 1.8rem;
       color: #fff;
-      cursor: pointer;
-      transition: transform .2s, box-shadow .2s;
-      position: relative;
-      z-index: 1;
+      box-shadow: 0 0 0 0 rgba(45,108,223,.5);
+      animation: vsl-pulse 2s ease-in-out infinite;
+      transition: transform .2s;
     }
-    .play-btn:hover { transform: scale(1.1); box-shadow: 0 0 40px rgba(45,108,223,.5); }
+    .vsl-play-btn .circle:hover { transform: scale(1.1); }
+    .vsl-play-btn span {
+      color: rgba(255,255,255,.85);
+      font-size: .88rem;
+      font-family: var(--font-mono);
+      letter-spacing: .05em;
+    }
+    .vsl-play-btn.hidden { display: none; }
+    @keyframes vsl-pulse {
+      0%,100% { box-shadow: 0 0 0 0 rgba(45,108,223,.5); }
+      50%      { box-shadow: 0 0 0 18px rgba(45,108,223,.0); }
+    }
+
     .video-list {
       display: flex;
       flex-wrap: wrap;
@@ -929,58 +969,65 @@
 <!-- ── HERO ──────────────────────────────────────────────────────── -->
 <section id="hero">
   <div class="container">
-    <div class="hero-inner">
-      <div class="hero-content fade-in">
-        <h1 style="text-align:center;">Execute projetos 3D complexos em segundos — <em>sem erros, sem retrabalho</em></h1>
-      </div>
-      <div class="hero-img-wrap fade-in fade-in-delay-2">
-        <img src="luminaire.jpg" alt="Modelo 3D automatizado com iLogic no Autodesk Inventor" style="width:100%; height:100%; object-fit:cover; border-radius:calc(var(--radius-lg) - 1px);" />
-      </div>
-      <div class="hero-content fade-in" style="text-align:center;">
-        <p style="margin-inline:auto;">Transforme horas (ou dias) de trabalho em minutos com o Método Automação Inteligente com iLogic. Precisão, controle e escala — no Autodesk Inventor.</p>
-        <a href="https://go.hotmart.com/I105022391N?dp=1" target="_blank" rel="noopener" class="btn btn--primary btn--xl btn-pulse">
-          Quero automatizar meus projetos 3D agora →
-        </a>
-      </div>
+    <!-- Título principal -->
+    <div class="hero-content fade-in" style="text-align:center; max-width:820px; margin-inline:auto; margin-bottom:40px;">
+      <p style="font-family:var(--font-mono); font-size:.88rem; color:rgba(255,255,255,.85); letter-spacing:.04em; margin-bottom:14px; background:rgba(45,108,223,.25); border:1px solid rgba(45,108,223,.5); display:inline-block; padding:6px 16px; border-radius:8px; font-weight:500;">iMatic: Automação de Peças, Montagens e Desenhos com iLogic</p>
+      <h1 style="color:#fff;">Execute projetos 3D complexos em segundos — <em>sem erros, sem retrabalho</em></h1>
     </div>
-  </div>
-</section>
 
-<!-- ── VIDEO ─────────────────────────────────────────────────────── -->
-<section id="video" class="section">
-  <div class="container">
-    <div class="section-head fade-in">
-      <div class="tag">📹 Apresentação</div>
-      <h2>Assista essa apresentação até o final</h2>
-      <div class="divider"></div>
-      <p>Descubra como automatizar seus projetos no Inventor e se tornar um profissional raro no mercado.</p>
+    <!-- VSL Player -->
+    <div class="vsl-wrap fade-in fade-in-delay-1">
+      <div class="vsl-video-area" id="vslArea">
+        <iframe
+          id="vslIframe"
+          src=""
+          data-src="https://www.youtube-nocookie.com/embed/Rh561bR1Eqk?autoplay=1&rel=0&modestbranding=1&playsinline=1"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowfullscreen>
+        </iframe>
+        <img src="video-vendas.jpg" alt="Thumbnail" class="vsl-thumb" id="vslThumb" onerror="this.src='https://img.youtube.com/vi/Rh561bR1Eqk/maxresdefault.jpg'" />
+        <div class="vsl-overlay" id="vslOverlay"></div>
+        <div class="vsl-play-btn" id="vslPlayBtn">
+          <div class="circle">▶</div>
+          <span>Clique para assistir a apresentação</span>
+        </div>
+      </div>
     </div>
-    <div class="video-wrap fade-in fade-in-delay-1" style="background:#000; cursor:pointer;" id="videoWrap">
-      <img
-        src="video-vendas.jpg"
-        alt="Thumbnail do vídeo de apresentação iMatic"
-        id="videoThumb"
-        style="position:absolute; inset:0; width:100%; height:100%; object-fit:cover; z-index:0;"
-        onerror="this.style.display='none'"
-      />
-      <div id="videoOverlay" style="position:absolute; inset:0; background:rgba(10,15,31,.45); z-index:1;"></div>
-      <div class="play-btn" id="playBtn" style="position:relative; z-index:2;">▶</div>
-      <iframe
-        id="vimeoPlayer"
-        src=""
-        data-src="https://player.vimeo.com/video/1210680400?autoplay=1&title=0&byline=0&portrait=0"
-        style="position:absolute; inset:0; width:100%; height:100%; border:none; z-index:3; display:none;"
-        allow="autoplay; fullscreen; picture-in-picture"
-        allowfullscreen
-      ></iframe>
+
+    <!-- CTA abaixo do vídeo -->
+    <div class="fade-in fade-in-delay-2" style="text-align:center; margin-top:36px;">
+      <a href="https://go.hotmart.com/I105022391N?dp=1" target="_blank" rel="noopener" class="btn btn--primary btn--xl btn-pulse">
+        Quero automatizar meus projetos 3D agora →
+      </a>
     </div>
-    <div class="video-list fade-in fade-in-delay-2">
+
+    <!-- Benefícios em pills abaixo do CTA -->
+    <div class="video-list fade-in fade-in-delay-3" style="margin-top:28px;">
       <div class="video-item">Projetos 3D completos em poucos cliques</div>
       <div class="video-item">Redução drástica de erros humanos</div>
       <div class="video-item">Automação de tarefas repetitivas</div>
       <div class="video-item">Mais produtividade sem aumentar equipe</div>
       <div class="video-item">Entrega de projetos de maior valor</div>
       <div class="video-item">Profissional raro e valorizado</div>
+    </div>
+  </div>
+</section>
+
+<!-- ── VIDEO (seção de introdução visual) ────────────────────────── -->
+<section style="padding-block: var(--section-py); background: var(--dark);">
+  <div class="container">
+    <div class="hero-inner fade-in">
+      <!-- Imagem da luminária -->
+      <div class="hero-img-wrap fade-in fade-in-delay-1">
+        <img src="luminaire.jpg" alt="Modelo 3D automatizado com iLogic no Autodesk Inventor" style="width:100%; height:100%; object-fit:cover; border-radius:calc(var(--radius-lg) - 1px);" onerror="this.parentElement.innerHTML='<div class=\'hero-img-icon\'>⚡</div><p>Automação Paramétrica no Autodesk Inventor</p>'" />
+      </div>
+      <!-- Texto e CTA -->
+      <div class="hero-content fade-in fade-in-delay-2" style="text-align:center;">
+        <p style="margin-inline:auto; font-size:1.1rem;">Transforme horas (ou dias) de trabalho em minutos com o Método Automação Inteligente com iLogic. Precisão, controle e escala — no Autodesk Inventor.</p>
+        <a href="https://go.hotmart.com/I105022391N?dp=1" target="_blank" rel="noopener" class="btn btn--primary btn--xl btn-pulse" style="margin-top:8px;">
+          Quero automatizar meus projetos 3D agora →
+        </a>
+      </div>
     </div>
   </div>
 </section>
@@ -1162,13 +1209,13 @@
         <div class="module-num">MÓDULO 02</div>
         <h3>iLogic Assembly</h3>
         <p>Leve a automação para montagens completas. Controle múltiplas peças, restrições e configurações com uma única execução.</p>
-        <div class="module-badge soon">🗓️ Publicação: 31/08/2026</div>
+        <div class="module-badge soon">🗓️ Publicação: 30/10/2026</div>
       </div>
       <div class="module-card fade-in fade-in-delay-3">
         <div class="module-num">MÓDULO 03</div>
         <h3>iLogic Drawing</h3>
         <p>Automatize a geração de desenhos técnicos. Views, cotas, títulos e folhas — tudo criado automaticamente.</p>
-        <div class="module-badge soon">🗓️ Publicação: 30/09/2026</div>
+        <div class="module-badge soon">🗓️ Publicação: 15/12/2026</div>
       </div>
     </div>
     <div style="margin-top: 48px;" class="fade-in">
@@ -1192,7 +1239,8 @@
     </div>
     <div class="offer-box fade-in fade-in-delay-1" id="checkout">
       <p style="color:rgba(255,255,255,.5); font-size:.85rem; margin-bottom:4px;">Investimento único</p>
-      <div class="offer-highlight"><small>R$</small>1.997</div>
+      <p style="color:rgba(255,255,255,.4); font-size:.9rem; text-decoration:line-through; margin-bottom:4px;">De R$ 1.497,00</p>
+      <div class="offer-highlight"><small>R$</small>697</div>
       <p class="offer-detail">ou em até 10x no cartão de crédito</p>
       <a href="https://go.hotmart.com/I105022391N?dp=1" target="_blank" rel="noopener" class="btn btn--primary btn--xl btn-pulse" style="width:100%; justify-content:center;">
         Quero automatizar meus projetos agora →
@@ -1411,11 +1459,16 @@
       <p>Contamos com múltiplos canais para que você tire dúvidas, avance com confiança e entregue resultados.</p>
     </div>
     <div class="support-grid">
-      <div class="support-card fade-in fade-in-delay-1">
-        <div class="support-icon">💬</div>
-        <h4>WhatsApp</h4>
-        <p>Suporte direto e rápido para dúvidas pontuais durante os seus estudos.</p>
-      </div>
+      <a href="https://wa.me/14389289011" target="_blank" rel="noopener" style="text-decoration:none; color:inherit;">
+        <div class="support-card fade-in fade-in-delay-1" style="cursor:pointer; border-color:rgba(37,211,102,.3);">
+          <div class="support-icon">💬</div>
+          <h4>WhatsApp</h4>
+          <p>Suporte direto e rápido para dúvidas pontuais durante os seus estudos.</p>
+          <div style="margin-top:14px; display:inline-flex; align-items:center; gap:6px; background:#25D366; color:#fff; font-size:.8rem; font-weight:700; padding:7px 16px; border-radius:999px;">
+            <span>💬</span> Falar no WhatsApp
+          </div>
+        </div>
+      </a>
       <div class="support-card fade-in fade-in-delay-2">
         <div class="support-icon">📧</div>
         <h4>E-mail</h4>
@@ -1485,19 +1538,19 @@
     });
   });
 
-  /* Vimeo player */
-  const playBtn      = document.getElementById('playBtn');
-  const vimeoPlayer  = document.getElementById('vimeoPlayer');
-  const videoThumb   = document.getElementById('videoThumb');
-  const videoOverlay = document.getElementById('videoOverlay');
+  /* ── VSL PLAYER (YouTube Embed Direto) ───────────────────────── */
+  const playBtn = document.getElementById('vslPlayBtn');
+  const thumb   = document.getElementById('vslThumb');
+  const overlay = document.getElementById('vslOverlay');
+  const iframe  = document.getElementById('vslIframe');
 
-  if (playBtn && vimeoPlayer) {
+  if (playBtn && iframe) {
     playBtn.addEventListener('click', () => {
-      vimeoPlayer.src = vimeoPlayer.dataset.src;
-      vimeoPlayer.style.display = 'block';
-      if (videoThumb)   videoThumb.style.display  = 'none';
-      if (videoOverlay) videoOverlay.style.display = 'none';
-      playBtn.style.display = 'none';
+      // Injeta o embed com autoplay garantido, tanto em servidor quanto local
+      iframe.src = iframe.getAttribute('data-src');
+      if (thumb) thumb.classList.add('hidden');
+      if (overlay) overlay.classList.add('hidden');
+      playBtn.classList.add('hidden');
     });
   }
 
